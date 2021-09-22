@@ -1,5 +1,7 @@
 package edu.westga.cs3110.unicoder.model;
 
+import java.util.Locale;
+
 /**
  * Codepoint class
  * @version: Fall 2021 - System Architecture
@@ -19,15 +21,14 @@ public class Codepoint {
         if (hexString.equals(null)) {
             throw new NullPointerException("Cannot pass Null as a parameter");
         }
-        this.hexString = hexString;
-     //   this.getUTF8Encoding();
+        this.hexString = hexString.toLowerCase(Locale.ROOT);
     }
 
     /**
      * Will encode the hexstring to UTF-32 as 8-digit hexadecimal string, without spaces or '0x' prefix
      */
     public String getUTF32Encoding() {
-        return this.padUTF32WithZeroes();
+       return this.padUTF32WithZeroes();
     }
 
     /**
@@ -45,7 +46,7 @@ public class Codepoint {
     public String getUTF8Encoding() {
         var result = "";
 
-        if(this.isUTF8SingleByte()){
+        if (this.isUTF8SingleByte()){
 
         }
         else if (this.isUTF8DoubleByte()){
@@ -54,7 +55,7 @@ public class Codepoint {
         else if (this.isUTF8TripleByte()) {
 
         }
-        else if (this.isUTF8QuadByte()){
+        else if (this.isQuadByteEncoding()){
 
         }
 
@@ -80,7 +81,7 @@ public class Codepoint {
         return intValueOfHexString >= 2048 && intValueOfHexString <= 65535;
     }
 
-    public boolean isUTF8QuadByte() {
+    public boolean isQuadByteEncoding() {
         var intValueOfHexString = Integer.parseInt(this.hexString, 16);
 
         return intValueOfHexString >= 65536 && intValueOfHexString <= 1114111;
