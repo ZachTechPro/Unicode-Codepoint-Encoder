@@ -10,6 +10,7 @@ import java.util.Locale;
 public class Codepoint {
 
     private String hexString;
+    private String byteCategory;
     private int intValueOfHexString;
 
     /**
@@ -21,9 +22,12 @@ public class Codepoint {
     public Codepoint(String hexString) {
         if (hexString.equals(null)) {
             throw new NullPointerException("Cannot pass Null as a parameter");
+
         }
+
         this.hexString = hexString.toLowerCase(Locale.ROOT);
         this.intValueOfHexString = Integer.parseInt(this.hexString, 16);
+        this.byteCategory = "";
 
     }
 
@@ -49,41 +53,72 @@ public class Codepoint {
     public String getUTF8Encoding() {
         var result = "";
 
-        if (this.isUTF8SingleByte()){
 
-        }
-        else if (this.isUTF8DoubleByte()){
+        // Reverse the bits and, shift them appropriately, and add the extra bits to it (those have to be in reverse order also)
+        // Once that's done, then that section should be in reverse order, and then we reverse it back and have the answer in binary.
+        // Finally, put it all back together in the correct order and turn it into a hex value, make it a string and return it.
 
-        }
-        else if (this.isUTF8TripleByte()) {
+        this.checkIsUTF8QuadByte();
+        this.checkIsUTF8TripleByte();
+        this.checkIsUTF8DoubleByte();
+        this.checkIsUTF8SingleByte();
 
-        }
-        else if (this.isQuadByteEncoding()){
-
+        switch (this.byteCategory) {
+            case "SINGLE":  result = this.encodeAsSingleByte(); break;
+            case "DOUBLE":  result = this.encodeAsDoubleByte(); break;
+            case "TRIPLE":  result = this.encodeAsTripleByte(); break;
+            case "QUAD":    result = this.encodeAsQuadByte(); break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + this.byteCategory);
         }
 
         return result;
     }
 
+    private String encodeAsQuadByte() {
+        return "quad";
+    }
+
+    private String encodeAsTripleByte() {
+        return "triple";
+    }
+
+    private String encodeAsDoubleByte() {
+        return "double";
+    }
+
+    private String encodeAsSingleByte() {
+        return "single";
+
+    }
+
     //TODO make these private when done, and remove the TestHelpers class in the test package.
-    public boolean isUTF8SingleByte() {
+    public void checkIsUTF8SingleByte() {
 
-        return this.intValueOfHexString >= 0 && this.intValueOfHexString <= 127;
+        if (this.intValueOfHexString >= 0 && this.intValueOfHexString <= 127) {
+            this.byteCategory = "SINGLE";
+        }
     }
 
-    public boolean isUTF8DoubleByte() {
+    public void checkIsUTF8DoubleByte() {
 
-        return this.intValueOfHexString >= 128 && this.intValueOfHexString <= 2047;
+       if (this.intValueOfHexString >= 128 && this.intValueOfHexString <= 2047) {
+           this.byteCategory = "DOUBLE";
+       }
     }
 
-    public boolean isUTF8TripleByte() {
+    public void checkIsUTF8TripleByte() {
 
-        return this.intValueOfHexString >= 2048 && this.intValueOfHexString <= 65535;
+        if (intValueOfHexString >= 2048 && this.intValueOfHexString <= 65535) {
+            this.byteCategory = "TRIPLE";
+        }
     }
 
-    public boolean isQuadByteEncoding() {
+    public void checkIsUTF8QuadByte() {
 
-        return this.intValueOfHexString >= 65536 && this.intValueOfHexString <= 1114111;
+        if(this.intValueOfHexString >= 65536 && this.intValueOfHexString <= 1114111) {
+            this.byteCategory = "QUAD";
+        }
     }
 
     private String padUTF32WithZeroes() {
