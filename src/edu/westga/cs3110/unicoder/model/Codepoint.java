@@ -10,6 +10,7 @@ import java.util.Locale;
 public class Codepoint {
 
     private String hexString;
+    private int intValueOfHexString;
 
     /**
      * Constructor
@@ -22,6 +23,8 @@ public class Codepoint {
             throw new NullPointerException("Cannot pass Null as a parameter");
         }
         this.hexString = hexString.toLowerCase(Locale.ROOT);
+        this.intValueOfHexString = Integer.parseInt(this.hexString, 16);
+
     }
 
     /**
@@ -64,37 +67,27 @@ public class Codepoint {
 
     //TODO make these private when done, and remove the TestHelpers class in the test package.
     public boolean isUTF8SingleByte() {
-        var intValueOfHexString = Integer.parseInt(this.hexString, 16);
 
-        return intValueOfHexString >= 0 && intValueOfHexString <= 127;
+        return this.intValueOfHexString >= 0 && this.intValueOfHexString <= 127;
     }
 
     public boolean isUTF8DoubleByte() {
-        var intValueOfHexString = Integer.parseInt(this.hexString, 16);
 
-        return intValueOfHexString >= 128 && intValueOfHexString <= 2047;
+        return this.intValueOfHexString >= 128 && this.intValueOfHexString <= 2047;
     }
 
     public boolean isUTF8TripleByte() {
-        var intValueOfHexString = Integer.parseInt(this.hexString, 16);
 
-        return intValueOfHexString >= 2048 && intValueOfHexString <= 65535;
+        return this.intValueOfHexString >= 2048 && this.intValueOfHexString <= 65535;
     }
 
     public boolean isQuadByteEncoding() {
-        var intValueOfHexString = Integer.parseInt(this.hexString, 16);
 
-        return intValueOfHexString >= 65536 && intValueOfHexString <= 1114111;
+        return this.intValueOfHexString >= 65536 && this.intValueOfHexString <= 1114111;
     }
 
     private String padUTF32WithZeroes() {
-        var stringLength = this.hexString.length();
-        var numZeroesToPadWith = 8 - stringLength;
 
-        for (int i = 1; i <= numZeroesToPadWith;  i++) {
-            this.hexString = "0" + this.hexString;
-        }
-
-        return this.hexString;
+        return String.format("%08x", this.intValueOfHexString);
     }
 }
