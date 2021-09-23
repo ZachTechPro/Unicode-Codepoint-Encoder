@@ -17,8 +17,8 @@ public class TestGetUTF32Encoding {
     public void testValidInput() {
         var hexString = "10FFFA";
         Codepoint codepoint = new Codepoint(hexString);
-        var expectedValue = "0010FFFA";
-        var actualValue = codepoint.getUTF32Encoding();
+        var expectedValue = "0010fffa";
+        var actualValue = codepoint.toUTF32();
 
         assertEquals(expectedValue, actualValue);
     }

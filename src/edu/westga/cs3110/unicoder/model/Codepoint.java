@@ -32,14 +32,14 @@ public class Codepoint {
     /**
      * Will encode the hexstring to UTF-32 as 8-digit hexadecimal string, without spaces or '0x' prefix
      */
-    public String getUTF32Encoding() {
+    public String toUTF32() {
        return this.padUTF32WithZeroes();
     }
 
     /**
      * Will encode the hexstring to UTF-16 as 8-digit, or 4-digit, hexadecimal string, without spaces or '0x' prefix
      */
-    public String getUTF16Encoding() {
+    public String toUTF16() {
         var result = (this.isInValidTwoByteUTF16Encoding()) ?
                 this.hexString : this.encodoeUTF16AsQuadByte();
 
@@ -49,13 +49,8 @@ public class Codepoint {
     /**
      * Will encode the hexstring to UTF-16 as 8-digit, 6-digit, 4-digit, or 2-digit  hexadecimal string, without spaces or '0x' prefix
      */
-    public String getUTF8Encoding() {
+    public String toUTF8() {
         var result = "";
-
-
-        // Reverse the bits and, shift them appropriately, and add the extra bits to it (those have to be in reverse order also)
-        // Once that's done, then that section should be in reverse order, and then we reverse it back and have the answer in binary.
-        // Finally, put it all back together in the correct order and turn it into a hex value, make it a string and return it.
 
         this.checkIsUTF8QuadByte();
         this.checkIsUTF8TripleByte();
@@ -93,8 +88,6 @@ public class Codepoint {
 
     }
 
-    //TODO make these private when done, and remove the TestHelpers class in the test package.
-
     private String encodoeUTF16AsQuadByte() {
         return "";
     }
@@ -108,28 +101,28 @@ public class Codepoint {
 
     }
 
-    public void checkIsUTF8SingleByte() {
+    private void checkIsUTF8SingleByte() {
 
         if (this.intValueOfHexString >= 0 && this.intValueOfHexString <= 127) {
             this.byteCategory = "SINGLE";
         }
     }
 
-    public void checkIsUTF8DoubleByte() {
+    private void checkIsUTF8DoubleByte() {
 
        if (this.intValueOfHexString >= 128 && this.intValueOfHexString <= 2047) {
            this.byteCategory = "DOUBLE";
        }
     }
 
-    public void checkIsUTF8TripleByte() {
+    private void checkIsUTF8TripleByte() {
 
         if (intValueOfHexString >= 2048 && this.intValueOfHexString <= 65535) {
             this.byteCategory = "TRIPLE";
         }
     }
 
-    public void checkIsUTF8QuadByte() {
+    private void checkIsUTF8QuadByte() {
 
         if(this.intValueOfHexString >= 65536 && this.intValueOfHexString <= 1114111) {
             this.byteCategory = "QUAD";
