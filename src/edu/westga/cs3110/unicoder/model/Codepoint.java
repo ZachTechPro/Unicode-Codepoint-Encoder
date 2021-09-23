@@ -22,13 +22,11 @@ public class Codepoint {
     public Codepoint(String hexString) {
         if (hexString.equals(null)) {
             throw new NullPointerException("Cannot pass Null as a parameter");
-
         }
 
         this.hexString = hexString.toLowerCase(Locale.ROOT);
         this.intValueOfHexString = Integer.parseInt(this.hexString, 16);
         this.byteCategory = "";
-
     }
 
     /**
@@ -42,7 +40,8 @@ public class Codepoint {
      * Will encode the hexstring to UTF-16 as 8-digit, or 4-digit, hexadecimal string, without spaces or '0x' prefix
      */
     public String getUTF16Encoding() {
-        var result = "";
+        var result = (this.isInValidTwoByteUTF16Encoding()) ?
+                this.hexString : this.encodoeUTF16AsQuadByte();
 
         return result;
     }
@@ -88,11 +87,27 @@ public class Codepoint {
     }
 
     private String encodeAsSingleByte() {
-        return "single";
+        var bottomEightBits = this.intValueOfHexString & 0b000000000000011111111;
+
+        return Integer.toHexString(bottomEightBits);
 
     }
 
     //TODO make these private when done, and remove the TestHelpers class in the test package.
+
+    private String encodoeUTF16AsQuadByte() {
+        return "";
+    }
+
+    private boolean isInValidTwoByteUTF16Encoding() {
+
+        return (this.intValueOfHexString >= 0 &&
+                this.intValueOfHexString <= 55295 ||
+                this.intValueOfHexString >= 57344 &&
+                this.intValueOfHexString <= 65535);
+
+    }
+
     public void checkIsUTF8SingleByte() {
 
         if (this.intValueOfHexString >= 0 && this.intValueOfHexString <= 127) {
